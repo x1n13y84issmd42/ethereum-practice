@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [[ $1 == "testnet" ]]; then
+    if [[ $2 == "attach" ]]; then
+        geth --datadir /home/eugene/.ethereum/ropsten attach /home/eugene/.ethereum/ropsten/geth.ipc
+    else
+        shift;
+        geth --datadir /home/eugene/.ethereum/ropsten ${@}
+    fi
+else
+    geth attach
+fi

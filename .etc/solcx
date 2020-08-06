@@ -1,0 +1,14 @@
+#!/bin/bash
+
+ContractPath=$1
+ContractName=${ContractPath%\.*}
+JSPath="${ContractName}.js"
+
+JS=$(solc --optimize --combined-json abi,bin,interface $1)
+
+if [[ $? = 0 ]]; then
+    echo "var $ContractName; var TheContract; TheContract=$ContractName=$JS" > $JSPath
+    echo "Successfully compiled and saved as $JSPath"
+else
+    echo "How dare you."
+fi

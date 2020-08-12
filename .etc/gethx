@@ -7,6 +7,18 @@ if [[ $1 == "testnet" ]]; then
         shift;
         geth --datadir /home/eugene/.ethereum/ropsten ${@}
     fi
+elif [[ $1 == "privnet" ]]; then
+    shift;
+    geth --datadir /home/eugene/.ethereum/privnet ${@}
+elif [[ $1 == "privnode" ]]; then
+    NODEDIR="/home/eugene/.ethereum/privnode_${2}"
+    if [[ ! -d $NODEDIR ]]; then
+        echo "Making a privnode directory ${2} @ $NODEDIR"
+        mkdir $NODEDIR
+    fi
+    shift;
+    shift;
+    geth --datadir $NODEDIR ${@}
 else
     geth attach
 fi

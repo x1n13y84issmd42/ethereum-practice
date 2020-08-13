@@ -53,3 +53,33 @@ gethx privnode n1 --networkid=1001 --bootnodes=enode://7fbe8ff924beeb345fd590521
 gethx privnode n2 --networkid=1001 --bootnodes=enode://7fbe8ff924beeb345fd5905218d575a2f61f7bbf6692cda82153d3c5de4b7ebe3ad994c000759143f3dfc0d809d65ad97117c00120d29bf2a468ae23fc141b85@127.0.0.1:0?discport=30301 --targetgaslimit 16233158 --rpc.gascap=25000000000000 --port=30305
 ```
 
+# Dev geth
+Run geth in dev mode.
+```
+gethx privnode dev --dev --http --http.port=8545
+```
+
+Attach to it from another terminal.
+```
+gethx privnode dev attach /home/eugene/.ethereum/privnode_dev/geth.ipc
+```
+
+Create accounts.
+```
+personal.newAccount()
+personal.newAccount()
+personal.newAccount()
+personal.newAccount()
+```
+
+Transfer eth from etherbase.
+```
+eth.sendTransaction({from:eth.coinbase, to:eth.accounts[1], value: web3.toWei(1000000, "ether")})
+eth.sendTransaction({from:eth.coinbase, to:eth.accounts[2], value: web3.toWei(1000000, "ether")})
+eth.sendTransaction({from:eth.coinbase, to:eth.accounts[3], value: web3.toWei(1000000, "ether")})
+eth.sendTransaction({from:eth.coinbase, to:eth.accounts[4], value: web3.toWei(1000000, "ether")})
+```
+
+Use keystore files to import accounts into MetaMask.
+
+You're all set.

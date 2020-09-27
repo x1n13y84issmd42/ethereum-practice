@@ -1,0 +1,28 @@
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "game",
+				"type": "address"
+			}
+		],
+		"name": "GameStarted",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "newGame",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >0.6.8;
+pragma experimental ABIEncoderV2;
 
 contract Ownable {
 	address payable _owner;
@@ -55,6 +56,8 @@ contract TicTacToe is Ownable {
 	//................................................................
 	event PlayerJoined(address addr, string name, CellState symbol);
 	event Move(uint x, uint y, CellState symbol, uint amount);
+	event Win(Player winner);
+	event WinRow(uint x1, uint y1, uint x2, uint y2, uint x3, uint y3);
 	
 	// METHODS
 	//................................................................
@@ -73,9 +76,9 @@ contract TicTacToe is Ownable {
 	
 	modifier only_player() {
 		if (state == GameState.XMove) {
-			require(msg.sender == XPlayer.addr, "Only the X player is allowed to move.");
+			require(msg.sender == XPlayer.addr, "It's the X player's turn.");
 		} else if (state == GameState.OMove) {
-			require(msg.sender == OPlayer.addr, "Only the O player is allowed to move.");
+			require(msg.sender == OPlayer.addr, "It's the O player's turn.");
 		}
 		
 		_;
@@ -83,18 +86,23 @@ contract TicTacToe is Ownable {
 	
 	modifier at_state(GameState s) {
 		 require(state == s, string(abi.encodePacked(
-			"Operation is possible only in the ",
+			"Operation is possible only in the '",
 			GameStateNames[s],
-			" state. Currently it is ",
+			"' state. Currently it is '",
 			GameStateNames[state],
-			"."
+			"'."
 		)));
 		
 		_;
 	}
 	
 	modifier only_at_game_state() {
-		require(state == GameState.XMove || state == GameState.OMove, "This action is only possible when the game is in progress.");
+		require((state == GameState.XMove) || (state == GameState.OMove), string(abi.encodePacked(
+			"This action is only possible when the game is in progress.",
+			" Currently it is '",
+			GameStateNames[state],
+			"'."
+		)));
 		
 		_;
 	}
@@ -137,9 +145,11 @@ contract TicTacToe is Ownable {
 		if (msg.sender == XPlayer.addr) {
 			board[x + y * 3] = CellState.X;
 			state = GameState.OMove;
+			XPlayer.bets += msg.value;
 		} else {
 			board[x + y * 3] = CellState.O;
 			state = GameState.XMove;
+			OPlayer.bets += msg.value;
 		}
 		
 		emit Move(x, y, board[x + y * 3], msg.value);
@@ -162,13 +172,17 @@ contract TicTacToe is Ownable {
 		// TODO: verify the draw scenario
 	}
 	
-	function verifyRow(uint x1, uint y1, uint x2, uint y2, uint x3, uint y3) only_at_game_state /*only_player*/ private {
+	function verifyRow(uint x1, uint y1, uint x2, uint y2, uint x3, uint y3) /*only_at_game_state*/ /*only_player*/ private {
 		CellState cs;
 		cs = board[x1+y1*3];
 		if (cs != CellState.Empty && cs == board[x2+y2*3] && cs == board[x3+y3*3]) {
 			if (cs == CellState.X) {
+				emit Win(XPlayer);
+				emit WinRow(x1, y1, x2, y2, x3, y3);
 				state = GameState.XWins;
 			} else {
+				emit Win(OPlayer);
+				emit WinRow(x1, y1, x2, y2, x3, y3);
 				state = GameState.OWins;
 			}
 		}
